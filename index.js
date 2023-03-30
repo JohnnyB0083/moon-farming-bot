@@ -10,6 +10,8 @@ const liquidityPoolAddressMini = "0xc09756432dad2ff50b2d40618f7b04546dd20043";
 const swapUniAddress = "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
 
 const moon = '0x0057Ac2d777797d31CD3f8f13bF5e927571D6Ad0';
+const weth = '0x722E8BdD2ce80A4422E880164f2079488e115365';
+
 const lp = "0xD6C821b282531868721b41BAdca1F1ce471f43C5";
 
 const liquidityPoolAddressMiniAbi = require(path.resolve(__dirname, "contracts/minichefv2.json"));
@@ -37,10 +39,16 @@ const lpContract = new ethers.Contract(
     quikNodeProvider
 );
 
+const swapContract = new ethers.Contract(
+    swapUniAddress,
+    swapUniAbi,
+    quikNodeProvider);
+
+
 const myWallet = wallet.connect(quikNodeProvider);
 const poolId = 2n;
 const blocksToWait = 4;
-
+const moonToWETH = [ moon, weth ];
 
 async function harvestRewards() {
     const harvestTx = await liquidityPoolMiniProvider.harvest.populateTransaction(poolId, myWallet.address);
@@ -54,11 +62,37 @@ async function harvestRewards() {
     console.log(`Harvested rewards.`);
 }
 
+async function convertMoonsToWETH() {
+    const block = await quikNodeProvider.getBlock();
+    const sixtySecondsFromNow = block.timestamp + 60000;
+
+    const moonsBalance = await moonsContract.balanceOf(myWallet.address);
+
+    const moonBalanceDecimal = FixedNumber.fromValue(moonsBalance, 18);
+    const percentage = FixedNumber.fromString(".495");
+    const moonsBalancePercent = moonBalanceDecimal.mul(percentage);
+
+    const swapTx = await swapContract.swapExactTokensForETH.populateTransaction(
+        moonsBalancePercent.value,
+        0n,
+        moonToWETH,
+        myWallet.address,
+        sixtySecondsFromNow);
+
+    await myWallet.signTransaction(swapTx);
+
+    const swapResponse = await myWallet.sendTransaction(swapTx);
+
+    await swapResponse.wait(blocksToWait);
+
+    console.log(`Swapped about 50% of moons for WETH.`);
+}
+
 async function addLiquidity() {
     const swapContract = new ethers.Contract(
-    swapUniAddress,
-    swapUniAbi,
-    quikNodeProvider);
+        swapUniAddress,
+        swapUniAbi,
+        quikNodeProvider);
 
     const block = await quikNodeProvider.getBlock();
     const sixtySecondsFromNow = block.timestamp + 60000;
@@ -130,7 +164,10 @@ async function depositLp() {
 }
 
 exports.sow = async (eventData, context, callback) => {
+
     await harvestRewards();
+
+    await convertMoonsToWETH();
 
     await addLiquidity();
 
