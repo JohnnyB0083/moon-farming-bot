@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "functions-framework --target=sow"
   },
-  "author": "",
+  "author": "JohnnyB0083",
   "license": "ISC",
   "devDependencies": {
     "@google-cloud/functions-framework": "^3.1.3"
