@@ -8,5 +8,10 @@ This is a project designed to setup a Google Cloud Function that will periodical
 - NodeJS version 16
 - Google Functions Framework
 
+### Deploy
+
+#### Setup the infrastructure
+1. Follow the README [here](infrastructure/README.md).
+
 ### Deploy the cloud function from local
-gcloud functions deploy moon-farming-bot --region=us-central1 --runtime=nodejs16 --source=. --entry-point=sow --trigger-topic=moon-farm-bot --set-secrets=MNEMONIC=projects/<your_project_id>/secrets/wallet-passphrase:1
+gcloud functions deploy moon-farming-bot --region=us-central1 --runtime=nodejs16 --source=. --entry-point=sow --trigger-topic=moon-farm-bot --set-secrets=MNEMONIC=projects/867150244849/secrets/wallet-passphrase:1
