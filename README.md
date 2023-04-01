@@ -22,4 +22,4 @@ This is a project designed to setup a Google Cloud Function that will periodical
 1. Set the project with the project name `gcloud config set project <your_project_name`.
     1. `gcloud functions deploy my-dca-function --region=us-central1 --runtime=nodejs16 --source=. --entry-point=sow --trigger-topic=moon-farm-bot --set-secrets=MNEMONIC=projects/<PROJECT_NUMBER>/secrets/wallet-passphrase:1`
     1. Example with version 3:  
-        1. `gcloud functions deploy moon-farming-bot --region=us-central1 --runtime=nodejs16 --source=. --entry-point=sow --trigger-topic=moon-farm-bot --set-secrets=MNEMONIC=projects/<your_project_id>/secrets/wallet-passphrase:3`
+        1. `gcloud functions deploy moon-farming-bot --region=us-central1 --runtime=nodejs16 --source=. --entry-point=sow --trigger-topic=moon-farm-bot --set-secrets=MNEMONIC=projects/<PROJECT_NUMBER>/secrets/wallet-passphrase:3`
