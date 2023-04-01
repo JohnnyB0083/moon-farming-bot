@@ -1,16 +1,9 @@
 # add your own project name here
 
-variable "moon_project" {
-  # update these values with your own names
-  project_name = "<project_name>"
-  billing_account = "<billing_account_name>"
-  project_name_description = "ex: Moon Farming Bot"
-
-  default = "01000000-0000-4000-8000-000030080200"
-}
-
 locals {
-  project_name = moon_project.project_name
+  project_name = "johnnb0083-moon-farming-bot"
+  billing_account = "dca-bot-billing"
+  project_name_description = "Production Farming Bot"
   region       = "us-central1"
 }
 
@@ -71,7 +64,8 @@ resource "google_project_service" "secret-manager" {
 }
 
 resource "google_service_account" "cloud_function_sa" {
-  account_id   = "moon-farming-service-account"
+  # must be less than 28 characters
+  account_id   = "${local.project_name}csa"
   display_name = "Moon Farming Service Account"
   description  = "Service Account used for the Moon Farming Cloud Function."
   project      = local.project_name
