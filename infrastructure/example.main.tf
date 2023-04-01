@@ -1,18 +1,20 @@
 # add your own project name here
+
 locals {
-  project_name = "<project_name>"
+  project_name = "johnnb0083-moon-farming-bot"
+  billing_account = "dca-bot-billing"
+  project_name_description = "Production Farming Bot"
   region       = "us-central1"
 }
 
 # Setup a billing account and add the name here
 data "google_billing_account" "moon-farming-account" {
-  display_name = "<your_billing_account>"
+  display_name = moon_project.billing_account
   open         = true
 }
 
 # Set your own alias
 provider "google" {
-  alias   = "<alias>"
   project = local.project_name
   region  = local.region
   zone    = "us-central1-c"
@@ -20,7 +22,7 @@ provider "google" {
 
 # Set your own name here
 resource "google_project" "moon_farming_project" {
-  name            = "<name>"
+  name            = moon_project.project_name_description
   project_id      = local.project_name
 
   billing_account = data.google_billing_account.moon-farming-account.id
@@ -62,7 +64,8 @@ resource "google_project_service" "secret-manager" {
 }
 
 resource "google_service_account" "cloud_function_sa" {
-  account_id   = "moon-farming-service-account"
+  # must be less than 28 characters
+  account_id   = "${local.project_name}csa"
   display_name = "Moon Farming Service Account"
   description  = "Service Account used for the Moon Farming Cloud Function."
   project      = local.project_name
